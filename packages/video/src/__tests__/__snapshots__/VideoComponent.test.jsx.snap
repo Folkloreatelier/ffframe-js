@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`match snapshot 1`] = `
+<div
+  className="undefined"
+>
+  <button
+    onClick={[Function]}
+    type="button"
+  >
+    Button
+  </button>
+</div>
+`;
