@@ -127,6 +127,16 @@ module.exports = (storybookBaseConfig, configType) => {
         exclude: /node_modules/,
     });
 
+    storybookBaseConfig.module.rules.push({
+        test: /\.(mp4|mp3|png|jpg)$/,
+        loader: 'file-loader',
+        options: {
+            limit: 0,
+            name: 'medias/[name]-[hash:6].[ext]',
+            publicPath: '',
+        },
+    });
+
     storybookBaseConfig.plugins.push(new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('development'),
         __DEV__: JSON.stringify(true),

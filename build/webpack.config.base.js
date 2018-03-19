@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 const isFunction = require('lodash/isFunction');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -81,10 +80,11 @@ module.exports = (env) => {
             chunkFilename: '[name].js',
             jsonpFunction: 'flklrJsonp',
             publicPath,
+            libraryTarget: 'umd',
         },
 
         plugins: [
-            
+
             extractPlugin,
         ],
 
@@ -94,6 +94,15 @@ module.exports = (env) => {
                     test: /\.jsx?$/,
                     loader: 'babel-loader',
                     include: contextPath,
+                    options: {
+                        forceEnv: env,
+                        cacheDirectory: true,
+                    },
+                },
+                {
+                    test: /\.jsx?$/,
+                    loader: 'babel-loader',
+                    include: /(query-string|strict-uri-encode)/,
                     options: {
                         forceEnv: env,
                         cacheDirectory: true,
@@ -113,7 +122,7 @@ module.exports = (env) => {
                     test: /\.svg$/,
                     include: contextPath,
                     exclude: [
-                        /\/img\//
+                        /\/img\//,
                     ],
                     use: [
                         `babel-loader?forceEnv=${env}&cacheDirectory`,

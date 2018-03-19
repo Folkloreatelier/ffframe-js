@@ -3,6 +3,7 @@ const webpackMerge = require('webpack-merge');
 const webpack = require('webpack');
 const path = require('path');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const nodeExternals = require('webpack-node-externals');
 const webpackConfig = require('./webpack.config.base');
 /* eslint-enable import/no-extraneous-dependencies */
 
@@ -10,7 +11,6 @@ const outputPath = path.join(process.env.PWD, 'dist');
 
 module.exports = env => (
     webpackMerge(webpackConfig(env), {
-        
 
         output: {
             path: outputPath,
@@ -38,6 +38,12 @@ module.exports = env => (
             new webpack.SourceMapDevToolPlugin({
                 filename: '[file].map',
                 exclude: [/vendor\//],
+            }),
+        ],
+
+        externals: [
+            nodeExternals({
+                whitelist: [/lodash/],
             }),
         ],
 

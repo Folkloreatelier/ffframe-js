@@ -1,3 +1,32 @@
 .container {
     position: relative;
 }
+
+.subtitles {
+    display: block;
+    font-size: 75%;
+    text-align: center;
+
+    .lines {
+        display: block;
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 10px;
+    }
+
+    .line {
+        position: absolute;
+        right: 10px;
+        bottom: 0;
+        left: 10px;
+    }
+
+    .text {
+        display: inline-block;
+        position: relative;
+        padding: 5px;
+        background: #000;
+        color: #fff;
+    }
+}

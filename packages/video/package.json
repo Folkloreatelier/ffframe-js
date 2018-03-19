@@ -1,7 +1,7 @@
 {
   "name": "@ffframe/video",
   "version": "",
-  "description": "",
+  "description": "Base React video component",
   "keywords": [
     "javascript"
   ],
@@ -45,11 +45,15 @@
     "start": "npm run storybook"
   },
   "dependencies": {
+    "@folklore/size": "^0.1.5",
     "babel-runtime": "^6.26.0",
     "classnames": "^2.2.5",
+    "gsap": "^1.20.4",
     "lodash": "^4.17.4",
+    "parse-srt": "^1.0.0-alpha",
     "prop-types": "^15.6.0",
-    "react-intl": "^2.4.0"
+    "react-intl": "^2.4.0",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "react": ">=15.0.0 || ^16.0.0",

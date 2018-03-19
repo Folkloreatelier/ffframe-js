@@ -1,12 +1,12 @@
-Package name
+ffframe Javascript
 ============
 
-[![Build Status](https://travis-ci.org/Folkloreatelier/package-name.svg?branch=master)](https://travis-ci.org/Folkloreatelier/package-name)
-[![Coverage Status](https://coveralls.io/repos/github/Folkloreatelier/package-name/badge.svg?branch=master)](https://coveralls.io/github/Folkloreatelier/package-name?branch=master)
+[![Build Status](https://travis-ci.org/ffframe/js.svg?branch=master)](https://travis-ci.org/ffframe/js)
+[![Coverage Status](https://coveralls.io/repos/github/ffframe/js/badge.svg?branch=master)](https://coveralls.io/github/ffframe/js?branch=master)
 
 ## Installation
 ```
-npm install package-name --save
+npm install ffframe-js --save
 ```
 
 ## Packages
@@ -14,4 +14,4 @@ This package is splitted in multiple packages that can be used independently.
 
 | Package Name | Description | Links |
 | ------------ | ----------- | ----- |
-| [package-name](https://github.com/Folkloreatelier/package-name) | Main package |  [Documentation](https://github.com/Folkloreatelier/package-name) |
+| [@ffframe/video](https://github.com/ffframe/js/tree/master/packages/video) | Main package |  [Documentation](https://github.com/ffframe/js/tree/master/packages/video) |

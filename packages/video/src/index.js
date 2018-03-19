@@ -1,3 +1,3 @@
-import VideoComponent from './VideoComponent';
+import Video from './Video';
 
-export default VideoComponent;
+export default Video;

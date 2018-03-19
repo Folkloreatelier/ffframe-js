@@ -6,10 +6,10 @@ const webpackConfig = require('../../build/webpack.config.dist');
 module.exports = env => (
     webpackMerge(webpackConfig(env), {
         entry: {
-            'ffframe_video': './index',
+            video: './index',
         },
         output: {
-            library: 'FfframeVideo',
+            library: 'Video',
         },
     })
 );
