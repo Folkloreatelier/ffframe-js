@@ -44,6 +44,7 @@ module.exports = env => (
         externals: [
             nodeExternals({
                 whitelist: [/lodash/],
+                modulesDir: path.join(__dirname, '../node_modules'),
             }),
         ],
 

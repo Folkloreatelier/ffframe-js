@@ -47,6 +47,7 @@ module.exports = (env) => {
             options: {
                 sourceMap: true,
                 includePaths: [
+                    path.join(__dirname, '../node_modules'),
                     path.join(process.env.PWD, './node_modules'),
                 ],
             },
@@ -177,6 +178,7 @@ module.exports = (env) => {
         resolve: {
             extensions: ['.js', '.jsx', '.es6'],
             modules: [
+                path.join(__dirname, '../node_modules'),
                 path.join(process.env.PWD, './node_modules'),
             ],
         },
