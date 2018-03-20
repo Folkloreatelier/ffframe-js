@@ -228,6 +228,10 @@ class Audio extends PureComponent {
         return this.state.duration;
     }
 
+    getCurrentTime() {
+        return this.state.time;
+    }
+
     play() {
         if (this.refAudio === null) {
             return Promise.reject();
