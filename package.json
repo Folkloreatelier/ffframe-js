@@ -32,6 +32,9 @@
     "publish": "npm run storybook-deploy && lerna publish",
     "start": "npm run storybook"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "storybook-deployer": {
     "gitUsername": "Folklore",
     "gitEmail": "info@atelierfolklore.ca",
