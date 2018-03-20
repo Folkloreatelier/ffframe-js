@@ -4,6 +4,8 @@ import { action } from '@storybook/addon-actions';// eslint-disable-line import/
 import storiesOf from '../../../../.storybook/storiesOf';
 import Text from '../Text';
 
+import styles from './styles.scss';
+
 const markdown = `
 # Markdown
 
@@ -18,7 +20,7 @@ ${markdown}
 
 storiesOf('Text', module)
     .add('simple', () => (
-        <div>
+        <div className={styles.container}>
             <Text>{markdown}</Text>
 
             <h4>Source</h4>

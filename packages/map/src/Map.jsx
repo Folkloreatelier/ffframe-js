@@ -22,8 +22,14 @@ const propTypes = {
     height: PropTypes.number,
     className: PropTypes.string,
     mapClassName: PropTypes.string,
+    disableInteraction: PropTypes.bool,
+    withoutUI: PropTypes.bool,
+    mapOptions: PropTypes.shape({}),
     onReady: PropTypes.func,
-    onComplete: PropTypes.func,
+    onMarkerClick: PropTypes.func,
+    onMarkerDrag: PropTypes.func,
+    onMarkerDragStart: PropTypes.func,
+    onMarkerDragEnd: PropTypes.func,
 };
 
 const defaultProps = {
@@ -36,8 +42,14 @@ const defaultProps = {
     height: null,
     className: null,
     mapClassName: null,
+    disableInteraction: false,
+    withoutUI: false,
+    mapOptions: null,
     onReady: null,
-    onComplete: null,
+    onMarkerClick: null,
+    onMarkerDrag: null,
+    onMarkerDragStart: null,
+    onMarkerDragEnd: null,
 };
 
 class Map extends Component {
@@ -45,7 +57,6 @@ class Map extends Component {
         super(props);
 
         this.createMap = this.createMap.bind(this);
-        this.onComplete = this.onComplete.bind(this);
         this.refMap = null;
         this.map = null;
         this.markers = [];
@@ -61,34 +72,60 @@ class Map extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        const zoomChanged = prevProps.zoom !== this.props.zoom;
-        if (this.map && zoomChanged) {
-            this.map.setZoom(this.props.zoom);
-        }
-
-        const centerChanged =
-            prevProps.latitude !== this.props.latitude ||
-            prevProps.longitude !== this.props.longitude;
-        if (this.map && centerChanged) {
-            this.map.setCenter(new google.maps.LatLng(this.props.latitude, this.props.longitude));
+        if (this.map !== null) {
+            this.updateMap(prevProps);
         }
     }
 
     componentWillUnmount() {
-        this.markers.forEach((marker) => {
-            marker.setMap(null);
-        });
+        this.destroyMarkers();
     }
 
-    onComplete() {
-        if (this.props.onComplete) {
-            this.props.onComplete();
+    onMarkerClick(e, index) {
+        const { onMarkerClick, markers } = this.props;
+        const marker = markers[index] || null;
+        const overlay = this.markers[index];
+        if (onMarkerClick !== null) {
+            onMarkerClick(e, index, marker, overlay);
+        }
+    }
+
+    onMarkerDrag(e, index) {
+        const { onMarkerDrag, markers } = this.props;
+        const marker = markers[index] || null;
+        const overlay = this.markers[index];
+        if (onMarkerDrag !== null) {
+            onMarkerDrag(e, index, marker, overlay);
+        }
+    }
+
+    onMarkerDragStart(e, index) {
+        const { onMarkerDragStart, markers } = this.props;
+        const marker = markers[index] || null;
+        const overlay = this.markers[index];
+        if (onMarkerDragStart !== null) {
+            onMarkerDragStart(e, index, marker, overlay);
+        }
+    }
+
+    onMarkerDragEnd(e, index) {
+        const { onMarkerDragEnd, markers } = this.props;
+        const marker = markers[index] || null;
+        const overlay = this.markers[index];
+        if (onMarkerDragEnd !== null) {
+            onMarkerDragEnd(e, index, marker, overlay);
         }
     }
 
     createMap() {
         const {
-            latitude, longitude, zoom, styles,
+            latitude,
+            longitude,
+            zoom,
+            styles,
+            disableInteraction,
+            withoutUI,
+            mapOptions,
         } = this.props;
 
         const center = new google.maps.LatLng(latitude, longitude);
@@ -97,47 +134,79 @@ class Map extends Component {
             center,
             zoom,
             styles,
-            disableDefaultUI: true,
-            disableDoubleClickZoom: true,
-            draggable: false,
-            gestureHandling: 'none',
-            scrollwheel: false,
-            clickableIcons: false,
+            disableDefaultUI: withoutUI,
+            disableDoubleClickZoom: disableInteraction,
+            draggable: !disableInteraction,
+            gestureHandling: disableInteraction ? 'none' : null,
+            scrollwheel: !disableInteraction,
+            clickableIcons: !disableInteraction,
+            ...mapOptions,
         };
         this.map = new google.maps.Map(this.refMap, options);
 
         this.updateMarkers();
 
-        const promises = [];
-        promises.push(new Promise((resolve) => {
-            const listener = this.map.addListener('tilesloaded', () => {
-                google.maps.event.removeListener(listener);
-                resolve();
-            });
-        }));
-        promises.push(new Promise((resolve) => {
-            const listener = this.map.addListener('projection_changed', () => {
-                google.maps.event.removeListener(listener);
-                resolve();
-            });
-        }));
-        return Promise.all(promises).then(() => this.map);
+        const readyEvents = ['tilesloaded', 'projection_changed'];
+        return Promise.all(readyEvents.map(ev =>
+            new Promise((resolve) => {
+                const listener = this.map.addListener(ev, () => {
+                    google.maps.event.removeListener(listener);
+                    resolve();
+                });
+            }))).then(() => this.map);
+    }
+
+    updateMap(prevProps) {
+        const {
+            zoom, markers, latitude, longitude,
+        } = this.props;
+
+        if (prevProps.zoom !== zoom) {
+            this.map.setZoom(zoom);
+        }
+
+        if (prevProps.latitude !== latitude || prevProps.longitude !== longitude) {
+            this.map.setCenter(new google.maps.LatLng(latitude, longitude));
+        }
+
+        if (prevProps.markers !== markers) {
+            this.updateMarkers();
+        }
     }
 
     updateMarkers() {
         const { markers } = this.props;
-        markers.forEach(({ latitude, longitude, icon }, index) => {
-            const currentMarker = get(this.markers, index, null);
+        this.markers = markers.map((marker, index) => {
+            const { latitude, longitude } = marker;
+            const currentOverlay = get(this.markers, index, null);
             const position = new google.maps.LatLng(latitude, longitude);
-            const marker =
-                currentMarker ||
+            const overlay =
+                currentOverlay ||
                 new google.maps.Marker({
                     map: this.map,
                 });
-            marker.setPosition(position);
-            marker.setIcon(icon || null);
-            this.markers[index] = marker;
+            overlay.setPosition(position);
+            overlay.setIcon(get(marker, 'icon', null));
+            overlay.setVisible(get(marker, 'visible', true));
+            overlay.setDraggable(get(marker, 'draggable', false));
+            overlay.setClickable(get(marker, 'clickable', true));
+            overlay.setOpacity(get(marker, 'opacity', 1));
+            if (currentOverlay === null) {
+                overlay.addListener('click', e => this.onMarkerClick(e, index));
+                overlay.addListener('dragstart', e => this.onMarkerDragStart(e, index));
+                overlay.addListener('dragend', e => this.onMarkerDragEnd(e, index));
+                overlay.addListener('drag', e => this.onMarkerDrag(e, index));
+            }
+            return overlay;
         });
+    }
+
+    destroyMarkers() {
+        this.markers.forEach((marker) => {
+            marker.setMap(null);
+            marker.unbindAll();
+        });
+        this.markers = [];
     }
 
     render() {

@@ -6,6 +6,7 @@ const propTypes = {
     height: PropTypes.number,
     className: PropTypes.string,
     style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    onReady: PropTypes.func,
 };
 
 const defaultProps = {
@@ -13,6 +14,7 @@ const defaultProps = {
     height: window.innerHeight || 600,
     className: null,
     style: null,
+    onReady: null,
 };
 
 class Canvas extends PureComponent {
@@ -21,6 +23,13 @@ class Canvas extends PureComponent {
 
         this.app = null;
         this.refCanvas = null;
+    }
+
+    componentDidMount() {
+        const { onReady } = this.props;
+        if (onReady !== null) {
+            onReady(this.refCanvas, this.getContext('2d'));
+        }
     }
 
     getContext(context) {
@@ -34,12 +43,13 @@ class Canvas extends PureComponent {
             className,
             style,
         } = this.props;
+
         return (
             <canvas
                 width={width}
                 height={height}
-                style={style}
                 className={className}
+                style={style}
                 ref={(ref) => { this.refCanvas = ref; }}
             />
         );

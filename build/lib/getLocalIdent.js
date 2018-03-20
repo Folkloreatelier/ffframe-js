@@ -10,8 +10,9 @@ module.exports = (localIdentName, localName, filePath) => {
     const packageJson = require(path.join(ROOT_PATH, nameMatches[1], nameMatches[2], 'package.json'));
     const packageName = packageJson.name.replace(/^(@ffframe|ffframe)\/?/, '');
     const basename = path.basename(filePath, '.scss');
+    const storyPrefix = filePath.match(/__stories__/) !== null ? 'stories-' : '';
     const fileSuffix = basename !== 'styles' ? `-${basename}` : '';
-    const identName = (localIdentName || LOCAL_IDENT_NAME).replace(/\[\s*name\s*\]/gi, `${packageName}${fileSuffix}`)
+    const identName = (localIdentName || LOCAL_IDENT_NAME).replace(/\[\s*name\s*\]/gi, `${storyPrefix}${packageName}${fileSuffix}`)
         .replace(/\[\s*local\s*\]/gi, localName);
     return identName;
 };

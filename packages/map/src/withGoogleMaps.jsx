@@ -20,11 +20,11 @@ const defaultProps = {
 };
 
 const contextTypes = {
-    googleMaspsApiKey: PropTypes.string,
+    googleMapsApiKey: PropTypes.string,
 };
 
 const childContextTypes = {
-    googleMaspsApiKey: PropTypes.string,
+    googleMapsApiKey: PropTypes.string,
 };
 
 export default function withGoogleMaps(opts) {
@@ -52,15 +52,35 @@ export default function withGoogleMaps(opts) {
 
             getChildContext() {
                 return {
-                    googleMaspsApiKey: this.props.apiKey || this.context.googleMaspsApiKey,
+                    googleMapsApiKey: this.props.apiKey || this.context.googleMapsApiKey,
                 };
             }
 
             componentDidMount() {
-                const { apiKey, locale } = this.props;
-                const { googleMaspsApiKey } = this.context;
-                loadGoogleMaps({
-                    apiKey: apiKey || googleMaspsApiKey,
+                const { apiKey } = this.props;
+                const { googleMapsApiKey } = this.context;
+                const key = apiKey || googleMapsApiKey;
+                if (key === null) {
+                    // eslint-disable-next-line no-console
+                    console.warning('You need to specify a Google Maps Api Key');
+                    return;
+                }
+                this.loadGoogleMaps(key);
+            }
+
+            componentDidUpdate(prevProps) {
+                const prevKey = prevProps.apiKey || this.context.googleMapsApiKey;
+                const key = this.props.apiKey || this.context.googleMapsApiKey;
+                const keyChanged = prevKey !== key;
+                if (keyChanged && key !== null && !this.state.loaded) {
+                    this.loadGoogleMaps(key);
+                }
+            }
+
+            loadGoogleMaps(key) {
+                const { locale } = this.props;
+                return loadGoogleMaps({
+                    apiKey: key,
                     locale,
                 })
                     .then(() => {

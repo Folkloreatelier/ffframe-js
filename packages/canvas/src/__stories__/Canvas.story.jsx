@@ -8,6 +8,14 @@ import PixiCanvas from '../Pixi';
 
 import spriteImage from './sprite.png';
 
+const onCanvasReady = (canvas, context) => {
+    const img = document.createElement('img');
+    img.src = spriteImage;
+    img.onload = () => {
+        context.drawImage(img, 300 / 2, 200 / 2);
+    };
+};
+
 const onPixiReady = (app) => {
     const { stage, screen } = app;
     const sprite = Sprite.fromImage(spriteImage);
@@ -23,6 +31,7 @@ storiesOf('Canvas', module)
             <Canvas
                 width={300}
                 height={200}
+                onReady={onCanvasReady}
             />
         </div>
     ))

@@ -460,7 +460,7 @@ class Video extends PureComponent {
                     position: 'relative',
                     width: width === null ? parentWidth : width,
                     height: height === null ? parentHeight : height,
-                    overflow: width !== null || height !== null ? 'hidden' : null,
+                    overflow: 'hidden',
                     ...style,
                 }}
                 className={className}
