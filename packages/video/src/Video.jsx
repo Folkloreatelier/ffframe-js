@@ -21,6 +21,7 @@ const propTypes = {
     nativeAutoPlay: PropTypes.bool,
     playsInline: PropTypes.bool,
     muted: PropTypes.bool,
+    volume: PropTypes.number,
     crossOrigin: PropTypes.string,
     preload: PropTypes.string,
     loop: PropTypes.bool,
@@ -55,6 +56,7 @@ const defaultProps = {
     nativeAutoPlay: false,
     playsInline: true,
     muted: false,
+    volume: 1,
     loop: false,
     rewind: false,
     crossOrigin: 'anonymous',
@@ -362,6 +364,7 @@ class Video extends PureComponent {
             width,
             height,
             preload,
+            volume,
             nativeAutoPlay,
             subtitles,
             poster,
@@ -418,6 +421,7 @@ class Video extends PureComponent {
                     poster={poster}
                     preload={preload}
                     style={videoStyle}
+                    volume={volume}
                     className={videoClassName}
                     crossOrigin={crossOrigin}
                     playsInline={playsInline}
