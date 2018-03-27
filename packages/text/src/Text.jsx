@@ -17,22 +17,26 @@ Link.defaultProps = {
 const propTypes = {
     children: PropTypes.string,
     inline: PropTypes.bool,
+    disableHtml: PropTypes.bool,
 };
 
 const defaultProps = {
     children: null,
     inline: false,
+    disableHtml: false,
 };
 
 const Text = ({
     children,
     inline,
+    disableHtml,
     ...props
 }) => (
     <ReactMarkdown
         {...(inline ? {
             containerTagName: 'span',
         } : null)}
+        escapeHtml={disableHtml}
         renderers={{
             paragraph: inline ? 'span' : 'p',
             link: Link,
