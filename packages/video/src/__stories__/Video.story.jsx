@@ -19,5 +19,15 @@ storiesOf('Video', module).add('simple', () => (
                 onEnded={action('ended')}
             />
         </div>
+
+        <div className={styles.videoBanner}>
+            <Video
+                src={video}
+                autoPlay
+                loop
+                onReady={action('ready')}
+                onEnded={action('ended')}
+            />
+        </div>
     </div>
 ));

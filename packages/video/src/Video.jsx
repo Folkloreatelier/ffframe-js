@@ -98,7 +98,6 @@ class Video extends PureComponent {
         this.state = {
             ready: false,
             playing: false,
-            muted: props.muted,
             time: null,
             duration: props.duration,
             width: props.videoWidth,
@@ -110,14 +109,14 @@ class Video extends PureComponent {
 
     componentDidMount() {
         const {
-            preload, autoPlay, width, height,
+            preload, autoPlay, width, height, muted, volume,
         } = this.props;
-        const { muted } = this.state;
         if (preload === 'auto' && autoPlay) {
             this.refVideo.load();
         }
 
         this.refVideo.setAttribute('muted', muted);
+        this.refVideo.volume = volume;
 
         if (width === null && height === null) {
             this.refParent = this.refElement.parentNode || null;
@@ -142,13 +141,6 @@ class Video extends PureComponent {
                 height: nextProps.videoHeight,
             });
         }
-
-        const mutedChanged = nextProps.muted !== this.props.muted;
-        if (mutedChanged) {
-            this.setState({
-                muted: nextProps.muted,
-            });
-        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -171,13 +163,22 @@ class Video extends PureComponent {
             }
         }
 
-        const mutedChanged = prevState.muted !== this.state.muted;
+        const mutedChanged = prevProps.muted !== this.props.muted;
         if (mutedChanged) {
             const { onMuted } = this.props;
+
+            // @NOTE: Fix https://github.com/facebook/react/issues/6544
             this.refVideo.setAttribute('muted', this.state.muted);
+
             if (onMuted !== null) {
                 onMuted(this.state.muted);
             }
+        }
+
+        const volumeChanged = prevProps.volume !== this.props.volume;
+        if (volumeChanged) {
+            // @NOTE: Fix https://github.com/facebook/react/issues/6544
+            this.refVideo.volume = this.props.volume;
         }
     }
 
@@ -365,6 +366,7 @@ class Video extends PureComponent {
             height,
             preload,
             volume,
+            muted,
             nativeAutoPlay,
             subtitles,
             poster,
@@ -374,7 +376,7 @@ class Video extends PureComponent {
         } = this.props;
 
         const {
-            ready, muted, parentWidth, parentHeight,
+            ready, parentWidth, parentHeight,
         } = this.state;
 
         const containerWidth = width !== null ? width : parentWidth;
